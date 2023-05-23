@@ -1,66 +1,61 @@
-// To parse this JSON data, do
-//
-//     final movieModel = movieModelFromJson(jsonString);
-
-import 'dart:convert';
-
-MovieModel movieModelFromJson(String str) =>
-    MovieModel.fromJson(json.decode(str));
-
-String movieModelToJson(MovieModel data) => json.encode(data.toJson());
-
 class MovieModel {
-  String status;
-  List<Datum> data;
+  String? status;
+  List<Data>? data;
   dynamic info;
+  String? error;
 
-  MovieModel({
-    required this.status,
-    required this.data,
-    this.info,
-  });
+  MovieModel({this.status, this.data, this.info});
 
-  factory MovieModel.fromJson(Map<String, dynamic> json) => MovieModel(
-        status: json["status"],
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
-        info: json["info"],
-      );
+  MovieModel.withError(String errorMessage) {
+    error = errorMessage;
+  }
 
-  Map<String, dynamic> toJson() => {
-        "status": status,
-        "data": List<dynamic>.from(data.map((x) => x.toJson())),
-        "info": info,
-      };
+  MovieModel.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    if (json['data'] != null) {
+      data = <Data>[];
+      json['data'].forEach((v) {
+        data!.add(Data.fromJson(v));
+      });
+    }
+    info = json['info'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    data['info'] = info;
+    return data;
+  }
 }
 
-class Datum {
-  int id;
-  String title;
-  String description;
-  String poster;
-  DateTime createdDate;
+class Data {
+  int? id;
+  String? title;
+  String? description;
+  String? poster;
+  String? createdDate;
 
-  Datum({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.poster,
-    required this.createdDate,
-  });
+  Data({this.id, this.title, this.description, this.poster, this.createdDate});
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        id: json["id"],
-        title: json["title"],
-        description: json["description"],
-        poster: json["poster"],
-        createdDate: DateTime.parse(json["created_date"]),
-      );
+  Data.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+    description = json['description'];
+    poster = json['poster'];
+    createdDate = json['created_date'];
+  }
 
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "description": description,
-        "poster": poster,
-        "created_date": createdDate.toIso8601String(),
-      };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['title'] = title;
+    data['description'] = description;
+    data['poster'] = poster;
+    data['created_date'] = createdDate;
+    return data;
+  }
 }
