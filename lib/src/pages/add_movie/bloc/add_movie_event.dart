@@ -7,6 +7,13 @@ abstract class AddMovieEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class PostMovieWithPoster extends AddMovieEvent {
+  final String title;
+  final String desc;
+  final File? poster;
+  const PostMovieWithPoster(this.title, this.desc, this.poster);
+}
+
 class PostMovie extends AddMovieEvent {
   final String title;
   final String desc;

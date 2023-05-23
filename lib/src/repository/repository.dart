@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daya5_test_arif_rahman/src/model/movie_model.dart';
 import 'package:dio/dio.dart';
 
@@ -13,6 +15,22 @@ class MovieRepository {
     } catch (error, stacktrace) {
       return MovieModel.withError(
           "Data not found, $error stackTrace: $stacktrace");
+    }
+  }
+
+  Future<void> addMoviesWithPhoto(
+      String title, String description, File? poster) async {
+    String fileName = poster!.path.split('/').last;
+
+    final formData = FormData.fromMap({
+      'title': title,
+      'description': description,
+      'poster': await MultipartFile.fromFile(poster.path, filename: fileName),
+    });
+    try {
+      await _dio.post(url, data: formData);
+    } catch (e) {
+      throw Exception(e);
     }
   }
 

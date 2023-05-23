@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:daya5_test_arif_rahman/src/pages/add_movie/bloc/add_movie_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddMovie extends StatefulWidget {
   const AddMovie({super.key});
@@ -14,8 +18,31 @@ class _AddMovieState extends State<AddMovie> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
 
+  var _imagePath;
+  File? imagefile;
+
   void _postData() {
-    _addMovieBloc.add(PostMovie(_titleController.text, _descController.text));
+    if (imagefile == null) {
+      _addMovieBloc.add(PostMovie(_titleController.text, _descController.text));
+    } else {
+      _addMovieBloc.add(PostMovieWithPoster(
+          _titleController.text, _descController.text, imagefile));
+    }
+  }
+
+  void _selectPicture() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+    if (image != null) {
+      File compress =
+          await FlutterNativeImage.compressImage(image.path, quality: 50);
+      setState(() {
+        imagefile = File(compress.path);
+        _imagePath = compress.path;
+      });
+    }
   }
 
   @override
@@ -69,6 +96,18 @@ class _AddMovieState extends State<AddMovie> {
                         decoration:
                             const InputDecoration(labelText: 'Description'),
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            _selectPicture();
+                          },
+                          child: const Text("Select Photo")),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(_imagePath.toString()),
                     ],
                   ),
                 );

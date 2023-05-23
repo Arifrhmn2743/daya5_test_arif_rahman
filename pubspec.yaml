@@ -15,6 +15,7 @@ dependencies:
   equatable: ^2.0.5
   fancy_shimmer_image: ^2.0.2
   image_picker: ^0.8.7+5
+  flutter_native_image: ^0.0.6+1
 
 dev_dependencies:
   flutter_test:
