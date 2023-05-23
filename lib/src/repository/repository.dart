@@ -15,4 +15,16 @@ class MovieRepository {
           "Data not found, $error stackTrace: $stacktrace");
     }
   }
+
+  Future<void> addMovies(String title, String description) async {
+    final formData = FormData.fromMap({
+      'title': title,
+      'description': description,
+    });
+    try {
+      await _dio.post(url, data: formData);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

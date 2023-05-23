@@ -1,4 +1,5 @@
 import 'package:daya5_test_arif_rahman/src/model/movie_model.dart';
+import 'package:daya5_test_arif_rahman/src/pages/add_movie/add_movie.dart';
 import 'package:daya5_test_arif_rahman/src/pages/detail_page/detail_page.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
           title: const Text("Movie List"),
           centerTitle: true,
         ),
+        floatingActionButton: FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddMovie(),
+                  ));
+            }),
         body: Container(
           margin: const EdgeInsets.all(8.0),
           child: BlocProvider(
