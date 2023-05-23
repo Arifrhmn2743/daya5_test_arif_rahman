@@ -11,6 +11,8 @@ class MovieBlocInitial extends MovieBlocState {}
 
 class MovieBlocLoading extends MovieBlocState {}
 
+class LoadMoreState extends MovieBlocState {}
+
 class MovieBlocLoaded extends MovieBlocState {
   final MovieModel movieModel;
   const MovieBlocLoaded(this.movieModel);

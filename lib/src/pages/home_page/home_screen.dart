@@ -51,7 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (state is MovieBlocLoading) {
                     return _buildLoading();
                   } else if (state is MovieBlocLoaded) {
-                    return _buildCard(context, state.movieModel);
+                    return _buildCard(context, state.movieModel,
+                        context.read<MovieBlocBloc>().controller, state);
                   } else if (state is MovieBlocError) {
                     return Container();
                   } else {
@@ -64,53 +65,67 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
-  Widget _buildCard(BuildContext context, MovieModel model) {
+  Widget _buildCard(BuildContext context, MovieModel model,
+      ScrollController controller, MovieBlocState state) {
     return ListView.builder(
-      itemCount: model.data!.length,
+      controller: controller
+        ..addListener(() {
+          _movieBlocBloc.add(LoadMoreMovie());
+        }),
+      // itemCount: model.data!.length,
+      itemCount:
+          state is LoadMoreState ? model.data!.length + 1 : model.data!.length,
       itemBuilder: (context, index) {
-        return Container(
-          margin: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailPage(
-                      title: model.data![index].title.toString(),
-                      desc: model.data![index].description.toString(),
-                      poster: model.data![index].poster.toString(),
-                    ),
-                  ));
-            },
-            child: Card(
-              child: Container(
-                margin: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    FancyShimmerImage(
-                      width: 100,
-                      height: 100,
-                      imageUrl: model.data![index].poster.toString(),
-                      errorWidget: Image.network(
-                          'https://i0.wp.com/www.dobitaobyte.com.br/wp-content/uploads/2016/02/no_image.png?ssl=1'),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      child: Text(
-                        " ${model.data![index].title}",
-                        style: const TextStyle(
-                          overflow: TextOverflow.ellipsis,
-                        ),
+        if (index < model.data!.length) {
+          final test = model.data![index];
+          return Container(
+            margin: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailPage(
+                        title: test.title.toString(),
+                        desc: test.description.toString(),
+                        poster: test.poster.toString(),
                       ),
-                    )
-                  ],
+                    ));
+              },
+              child: Card(
+                child: Container(
+                  margin: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: <Widget>[
+                      FancyShimmerImage(
+                        width: 100,
+                        height: 100,
+                        imageUrl: test.poster.toString(),
+                        errorWidget: Image.network(
+                            'https://i0.wp.com/www.dobitaobyte.com.br/wp-content/uploads/2016/02/no_image.png?ssl=1'),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Text(
+                          " ${test.title}",
+                          style: const TextStyle(
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
       },
     );
   }
