@@ -11,8 +11,8 @@ class MovieRepository {
       Response response = await _dio.get(url, queryParameters: params);
       return MovieModel.fromJson(response.data);
     } catch (error, stacktrace) {
-      print("Exception occured: $error stackTrace: $stacktrace");
-      return MovieModel.withError("Data not found");
+      return MovieModel.withError(
+          "Data not found, $error stackTrace: $stacktrace");
     }
   }
 }

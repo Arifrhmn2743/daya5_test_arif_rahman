@@ -1,8 +1,8 @@
 import 'package:daya5_test_arif_rahman/src/model/movie_model.dart';
+import 'package:daya5_test_arif_rahman/src/pages/detail_page/detail_page.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'bloc/movie_bloc_bloc.dart';
 
@@ -37,11 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: BlocListener<MovieBlocBloc, MovieBlocState>(
               listener: (context, state) {
                 if (state is MovieBlocError) {
-                  Fluttertoast.showToast(
-                    msg: 'Terjadi kesalahan',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message!),
+                    ),
                   );
                 }
               },
@@ -71,35 +70,43 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         return Container(
           margin: const EdgeInsets.all(8.0),
-          child: Card(
-            child: Container(
-              margin: const EdgeInsets.all(8.0),
-              child: Row(
-                children: <Widget>[
-                  FancyShimmerImage(
-                    width: 100,
-                    height: 100,
-                    imageUrl: model.data![index].poster.toString(),
-                    errorWidget: Image.network(
-                        'https://i0.wp.com/www.dobitaobyte.com.br/wp-content/uploads/2016/02/no_image.png?ssl=1'),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          " ${model.data![index].title}",
-                          style: const TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailPage(
+                      title: model.data![index].title.toString(),
+                      desc: model.data![index].description.toString(),
+                      poster: model.data![index].poster.toString(),
                     ),
-                  )
-                ],
+                  ));
+            },
+            child: Card(
+              child: Container(
+                margin: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: <Widget>[
+                    FancyShimmerImage(
+                      width: 100,
+                      height: 100,
+                      imageUrl: model.data![index].poster.toString(),
+                      errorWidget: Image.network(
+                          'https://i0.wp.com/www.dobitaobyte.com.br/wp-content/uploads/2016/02/no_image.png?ssl=1'),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: Text(
+                        " ${model.data![index].title}",
+                        style: const TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

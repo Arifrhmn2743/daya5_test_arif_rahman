@@ -8,12 +8,12 @@ part 'movie_bloc_state.dart';
 
 class MovieBlocBloc extends Bloc<MovieBlocEvent, MovieBlocState> {
   MovieBlocBloc() : super(MovieBlocInitial()) {
-    final MovieRepository _movieRepository = MovieRepository();
+    final MovieRepository movieRepository = MovieRepository();
 
     on<MovieFetched>((event, emit) async {
       try {
         emit(MovieBlocLoading());
-        final list = await _movieRepository.getMovies(1);
+        final list = await movieRepository.getMovies(1);
         emit(MovieBlocLoaded(list));
       } catch (e) {
         emit(const MovieBlocError("Error"));
