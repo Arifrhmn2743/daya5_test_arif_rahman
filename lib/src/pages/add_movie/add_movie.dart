@@ -17,16 +17,19 @@ class _AddMovieState extends State<AddMovie> {
   final AddMovieBloc _addMovieBloc = AddMovieBloc();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
   var _imagePath;
   File? imagefile;
 
   void _postData() {
-    if (imagefile == null) {
-      _addMovieBloc.add(PostMovie(_titleController.text, _descController.text));
-    } else {
-      _addMovieBloc.add(PostMovieWithPoster(
-          _titleController.text, _descController.text, imagefile));
+    if (_formKey.currentState!.validate()) {
+      if (imagefile == null) {
+        _addMovieBloc
+            .add(PostMovie(_titleController.text, _descController.text));
+      } else {
+        _addMovieBloc.add(PostMovieWithPoster(
+            _titleController.text, _descController.text, imagefile));
+      }
     }
   }
 
@@ -71,44 +74,59 @@ class _AddMovieState extends State<AddMovie> {
           child: BlocBuilder<AddMovieBloc, AddMovieState>(
             builder: (context, state) {
               if (state is AddMovieInitial) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Movie Titles:"),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: _titleController,
-                        decoration: const InputDecoration(labelText: 'Title'),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text("Description:"),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: _descController,
-                        decoration:
-                            const InputDecoration(labelText: 'Description'),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            _selectPicture();
+                return Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("Movie Titles:"),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
                           },
-                          child: const Text("Select Photo")),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(_imagePath.toString()),
-                    ],
+                          controller: _titleController,
+                          decoration: const InputDecoration(labelText: 'Title'),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text("Description:"),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                          controller: _descController,
+                          decoration:
+                              const InputDecoration(labelText: 'Description'),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              _selectPicture();
+                            },
+                            child: const Text("Select Photo")),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(_imagePath.toString()),
+                      ],
+                    ),
                   ),
                 );
               } else if (state is AddingMovies) {
